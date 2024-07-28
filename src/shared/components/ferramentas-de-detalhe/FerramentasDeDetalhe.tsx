@@ -1,4 +1,5 @@
-import { Box, Button, Divider, Icon, Paper, useTheme } from "@mui/material"
+import { Box, Button, Divider, Icon, Paper, Skeleton, useTheme } from "@mui/material"
+
 
 interface IProps {
     textoBotaoNovo?: string
@@ -8,6 +9,12 @@ interface IProps {
     mostrarBotaoApagar?: boolean
     mostrarBotaoSalvar?: boolean
     mostrarBotaoSalvarEFeichar?: boolean
+
+    mostrarBotaoNovoCarregando?: boolean
+    mostrarBotaoVoltarCarregando?: boolean
+    mostrarBotaoApagarCarregando?: boolean
+    mostrarBotaoSalvarCarregando?: boolean
+    mostrarBotaoSalvarEFeicharCarregando?: boolean
 
     aoClicarEmNovo?: () => void
     aoClicarEmVoltar?: () => void
@@ -25,6 +32,12 @@ export const FerramentasDeDetalhe: React.FC<IProps> = ({
     mostrarBotaoSalvar = true,
     mostrarBotaoSalvarEFeichar = false,
 
+    mostrarBotaoNovoCarregando = false,
+    mostrarBotaoVoltarCarregando = false,
+    mostrarBotaoApagarCarregando = false,
+    mostrarBotaoSalvarCarregando = false,
+    mostrarBotaoSalvarEFeicharCarregando = false,
+
     aoClicarEmNovo,
     aoClicarEmVoltar,
     aoClicarEmApagar,
@@ -34,53 +47,157 @@ export const FerramentasDeDetalhe: React.FC<IProps> = ({
 
     const theme = useTheme()
 
+    interface IToggleLoadButton {
+        loading: {
+            isShowButton: boolean,
+            button: JSX.Element
+        },
+        button: {
+            isShowButton: boolean,
+            button: JSX.Element
+        }
+    }
+
+
     return (
         <Box gap={1} marginX={1} padding={1} paddingX={2} display="flex" alignItems="center" height={theme.spacing(5)} component={Paper}>
 
-            {
-                mostrarBotaoSalvar && (
-                    <Button color="primary" disableElevation variant="contained" onClick={aoClicarEmSalvar} startIcon={<Icon>save</Icon>}>
-                        Salvar
-                    </Button>
-                )
-            }
-
-            {
-                mostrarBotaoSalvarEFeichar && (
-                    <Button color="primary" disableElevation variant="outlined" onClick={aoClicarEmSalvarEFeichar} startIcon={<Icon>save</Icon>}>
-                        Salvar e voltar
-                    </Button>
-                )
-            }
-
-            {
-                mostrarBotaoApagar && (
-                    <Button color="primary" disableElevation variant="outlined" onClick={aoClicarEmApagar} startIcon={<Icon>delete</Icon>}>
-                        Apagar
-                    </Button>
-                )
-            }
-
-            {
-                mostrarBotaoNovo && (
-                    <Button color="primary" disableElevation variant="outlined" onClick={aoClicarEmNovo} startIcon={<Icon>add</Icon>}>
-                        {textoBotaoNovo}
-                    </Button>
-                )
-            }
-
+            {botaoSalvar()}
+            {botaoSalvarVoltar()}
+            {botaoApagar()}
+            {botaoNovo()}
 
             <Divider variant="middle" orientation="vertical" />
 
-            {
-                mostrarBotaoVoltar && (
-                    <Button color="primary" disableElevation variant="outlined" onClick={aoClicarEmVoltar} startIcon={<Icon>arrow_back</Icon>}>
-                        Voltar
-                    </Button>
-                )
-            }
+            {botaoVoltar()}
 
 
         </Box>
     )
+
+    function botaoVoltar() {
+        return toggleBetweenChargingAndLoaded({
+            loading: {
+                isShowButton: mostrarBotaoVoltarCarregando,
+                button: (<Skeleton width={180} height={60} />)
+            },
+            button: {
+                isShowButton: mostrarBotaoVoltar,
+                button: (
+                    <Button
+                        color="primary"
+                        disableElevation
+                        variant="outlined"
+                        onClick={aoClicarEmVoltar}
+                        startIcon={<Icon>arrow_back</Icon>}>
+                        Voltar
+                    </Button>
+                )
+            }
+        })
+    }
+
+    function botaoNovo() {
+        return toggleBetweenChargingAndLoaded({
+            loading: {
+                isShowButton: mostrarBotaoNovoCarregando,
+                button: (< Skeleton width={110} height={60} />)
+            },
+            button: {
+                isShowButton: mostrarBotaoNovo,
+                button: (
+                    <Button
+                        color="primary"
+                        disableElevation
+                        variant="outlined"
+                        onClick={aoClicarEmNovo}
+                        startIcon={<Icon>add</Icon>}>
+                        {textoBotaoNovo}
+                    </Button>
+                )
+            }
+        })
+    }
+
+    function botaoApagar() {
+        return toggleBetweenChargingAndLoaded({
+            loading: {
+                isShowButton: mostrarBotaoApagarCarregando,
+                button: (<Skeleton width={180} height={60} />)
+
+            },
+            button: {
+                isShowButton: mostrarBotaoApagar,
+                button: (
+                    <Button
+                        color="primary"
+                        disableElevation
+                        variant="outlined"
+                        onClick={aoClicarEmApagar}
+                        startIcon={<Icon>delete</Icon>}>
+                        Apagar
+                    </Button>
+                )
+
+            }
+        })
+    }
+
+    function botaoSalvarVoltar() {
+        return toggleBetweenChargingAndLoaded({
+            loading: {
+                isShowButton: mostrarBotaoSalvarEFeicharCarregando,
+                button: (<Skeleton width={180} height={60} />)
+
+            },
+            button: {
+                isShowButton: mostrarBotaoSalvarEFeichar,
+                button: (
+                    <Button
+                        color="primary"
+                        disableElevation
+                        variant="outlined"
+                        onClick={aoClicarEmSalvarEFeichar}
+                        startIcon={<Icon>save</Icon>}>
+                        Salvar e voltar
+                    </Button>
+                )
+
+            }
+        })
+    }
+
+    function botaoSalvar() {
+        return toggleBetweenChargingAndLoaded({
+            loading: {
+                isShowButton: mostrarBotaoSalvarCarregando,
+                button: (<Skeleton width={110} height={60} />)
+            },
+            button: {
+                isShowButton: mostrarBotaoSalvar,
+                button: (
+                    <Button
+                        color="primary"
+                        disableElevation
+                        variant="contained"
+                        onClick={aoClicarEmSalvar}
+                        startIcon={<Icon>save</Icon>}>
+                        Salvar
+                    </Button>
+                )
+            }
+        })
+
+    }
+
+    function toggleBetweenChargingAndLoaded(toggleLoadButton: IToggleLoadButton) {
+        if (toggleLoadButton.button.isShowButton) {
+            if (toggleLoadButton.loading.isShowButton) {
+                return toggleLoadButton.loading.button
+            } else {
+                return toggleLoadButton.button.button
+
+            }
+        }
+    }
 }
